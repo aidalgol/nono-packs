@@ -1,7 +1,9 @@
 name: Publish opencode pack
 on:
   push:
-    tags: ["opencode-v*"]
+    tags:
+      - "opencode-v*"
+      - "!opencode-v1-v*"
   workflow_dispatch:
 
 # Inlined (rather than calling a reusable _publish.yml) so the OIDC
