@@ -38,7 +38,7 @@
       "$HOME/.local/bin/maki",
       "$NONO_PACKAGES",
       "$NONO_CONFIG/profiles",
-      "$HOME/.agents"
+      "$HOME/.agents/skills"
     ]
   },
   "network": { "block": false },

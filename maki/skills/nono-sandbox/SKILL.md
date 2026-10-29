@@ -17,7 +17,7 @@ nono applies an allow-list of filesystem paths and network rules before your pro
 
 ## When an operation is denied
 
-Output that explicitly names nono as the denying sandbox is conclusive. `landlock` and `sandbox: deny` signal sandbox enforcement but do not identify its provenance; generic EPERM, EACCES, "Operation not permitted", and "Permission denied" are also ambiguous. With a concrete path, run `nono why --self`; a successful result with status `DENIED` confirms the nono boundary, even when the reason is `path_not_granted` and no policy source is reported. If no path is available or `nono why` does not support the operation, keep investigating before treating it as a nono denial.
+Output that explicitly names nono as the denying sandbox is conclusive. `landlock` and `sandbox: deny` signal sandbox enforcement but do not identify its provenance; generic EPERM, EACCES, "Operation not permitted", and "Permission denied" are also ambiguous. With a concrete path, run `nono why --self`; a successful result with status `DENIED` confirms the nono boundary, even when the reason is `path_not_granted` and no policy source is reported. If no path is available or `nono why` does not successfully report `DENIED`, report: `Nono sandbox unconfirmed; this permission failure needs a non-sandbox diagnosis.`
 
 When a nono denial is confirmed:
 
@@ -34,7 +34,7 @@ When a nono denial is confirmed:
 Run `nono why` to understand exactly why the operation was blocked:
 
 ```bash
-nono why --self --path /path/that/failed --op read 2>/dev/null
+nono why --self --path /path/that/failed --op read
 ```
 
 This tells you:
@@ -52,9 +52,9 @@ After diagnosing with `nono why`, present the user with options:
 
 1. **Quick fix** - restart the session with only the access actually needed, using the exact flag `nono why` suggested for the denied operation. Never default to `--allow` (read+write) when the denial was read-only or write-only:
    ```
-   nono run --read /path/to/needed -- maki    # read-only access
-   nono run --write /path/to/needed -- maki   # write-only access
-   nono run --allow /path/to/needed -- maki   # only when both are required
+   nono run --profile <active-profile> --read /path/to/needed -- maki    # read-only access
+   nono run --profile <active-profile> --write /path/to/needed -- maki   # write-only access
+   nono run --profile <active-profile> --allow /path/to/needed -- maki   # only when both are required
    ```
 
 2. **Write a profile draft** - if the user needs this access regularly, offer to draft a nono profile for them. The active profile directory `~/.config/nono/profiles/` is read-only from inside the sandbox by design, so drafts are written to `~/.config/nono/profile-drafts/` and the user promotes them out-of-band.
@@ -91,7 +91,7 @@ The file contains:
 ## Common scenarios
 
 **"I need to read a config file outside the project"**
-Run `nono why --self --path /path/to/config --op read 2>/dev/null`, then offer the quick fix using `--read` (not `--allow`) or a profile with read-only access.
+Run `nono why --self --path /path/to/config --op read`, then offer the quick fix using `--read` (not `--allow`) or a profile with read-only access.
 
 **"I need to install a global package"**
 Global package managers write to system paths. Suggest project-local alternatives (e.g., `npx` instead of global install) or offer to write a profile.
@@ -100,4 +100,4 @@ Global package managers write to system paths. Suggest project-local alternative
 If the profile blocks network access, the user must use a profile that allows it. Offer to write one.
 
 **"I need to access another project directory"**
-Run `nono why --self --path /path/to/other/project --op readwrite 2>/dev/null`, then offer the quick fix using `--allow` (readwrite is genuinely needed here) or a profile.
+Run `nono why --self --path /path/to/other/project --op readwrite`, then offer the quick fix using `--allow` (readwrite is genuinely needed here) or a profile.

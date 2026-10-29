@@ -1,6 +1,6 @@
 # maki nono
 
-`maki` is a `nono` package for the Maki CLI agent.
+`maki` is a `nono` package for the [Maki CLI agent](https://github.com/tontinton/maki).
 
 It installs a nono profile and a packaged skill that make Maki behave correctly when it is running inside a `nono` security sandbox.
 
@@ -58,6 +58,8 @@ These artifacts are declared in [`package.json`](./package.json).
 ## Package Metadata
 
 - Name: `maki`
+- Maki compatibility: `v0.6.5` (other versions are not yet verified)
+- Minimum nono version: `v0.75.0`
 - Pack type: `agent`
 - Platforms: `macos`, `linux`
 - License: `Apache-2.0`
